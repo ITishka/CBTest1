@@ -9,11 +9,21 @@ import os
 import glob
 
 
+
 @Given('пользователь на странице "{url}"')
 def step(context, url):
     context.browser = webdriver.Firefox()
     context.browser.get(url)
 
+#удаление старых скринов и создание/очистка файла genius_idea.txt
+@Then('очистили среду')
+def step(context):
+    f = open("genius_idea.txt", "w+")
+    f.write('')
+    f.close()
+    files = glob.glob('./screen/*.png')
+    for f in files:
+        os.remove(f)
 
 @Then('отображается поле "{text}"')
 def step(context, text):
@@ -70,23 +80,15 @@ def step(context, text):
     context.browser.find_element_by_xpath("//select/option[@value='" + text + "']").click()
 
 
-@When('запомнили текст1 "{text}"')
+@When('запомнили текст из элемента "{text}"')
 def step(context, text):
-    tx1 = context.browser.find_element_by_class_name(text).text
-    f = open("genius_idea.txt", "w+")
-    f.write(tx1 + '\n')
+    tx = context.browser.find_element_by_class_name(text).text
+    f = open("genius_idea.txt", "a")
+    f.write(tx + '\n')
     f.close()
 
 
-@When('запомнили текст2 "{text}"')
-def step(context, text):
-    tx2 = context.browser.find_element_by_class_name(text).text
-    f = open("genius_idea.txt", "a+")
-    f.write(tx2 + '\n')
-    f.close()
-
-
-@Then('сравнили текст1 и текст2')
+@Then('сравнили запомненные текст1 и текст2')
 def step(context):
     f = open("genius_idea.txt", "r+")
     tx1 = f.readline()
@@ -97,12 +99,6 @@ def step(context):
         print(tx1 + " равно " + tx2)
     f.close()
 
-
-@When('удалили скрины')
-def step(context):
-    files = glob.glob('./screen/*.png')
-    for f in files:
-        os.remove(f)
 
 @When('закончили тест')
 def step(context):
