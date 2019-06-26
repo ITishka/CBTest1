@@ -1,0 +1,5 @@
+.idea/
+screen/
+venv/
+geckodriver.log
+genius_idea.txt

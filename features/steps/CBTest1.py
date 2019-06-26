@@ -9,28 +9,29 @@ import os
 import glob
 
 
-
 @Given('пользователь на странице "{url}"')
 def step(context, url):
     context.browser = webdriver.Firefox()
     context.browser.get(url)
 
-#удаление старых скринов и создание/очистка файла genius_idea.txt
+
+# удаление старых скринов и создание/очистка файла genius_idea.txt
 @Then('очистили среду')
 def step(context):
-    f = open("genius_idea.txt", "w+")
-    f.write('')
-    f.close()
     files = glob.glob('./screen/*.png')
-    for f in files:
-        os.remove(f)
+    for s in files:
+        os.remove(s)
+
+    with open('genius_idea.txt', 'w+', encoding='utf-8') as f:
+        f.write('')
+
 
 @Then('отображается поле "{text}"')
 def step(context, text):
     try:
         assert context.browser.find_element_by_xpath('//*[@title="' + text + '"]')
     except Exception:
-        print("Поле " + text + " не появилось")
+        print("Поле {} не появилось".format(text))
 
 
 @Then('ввели в поле "{text1}" "{text2}"')
@@ -83,21 +84,23 @@ def step(context, text):
 @When('запомнили текст из элемента "{text}"')
 def step(context, text):
     tx = context.browser.find_element_by_class_name(text).text
-    f = open("genius_idea.txt", "a")
-    f.write(tx + '\n')
-    f.close()
+    # f = open("genius_idea.txt", "a")
+    # f.write(tx + '\n')
+    # f.close()
+    with open('genius_idea.txt', 'a') as f:
+        f.write(tx + '\n')
 
 
-@Then('сравнили запомненные текст1 и текст2')
+@Then('сравнили запомненные тексты')
 def step(context):
-    f = open("genius_idea.txt", "r+")
-    tx1 = f.readline()
-    tx2 = f.readline()
-    if tx1 != tx2:
-        print(tx1 + " не равно " + tx2)
-    else:
-        print(tx1 + " равно " + tx2)
-    f.close()
+    # f = open("genius_idea.txt", "r+")
+    # tx1 = f.readline()
+    # tx2 = f.readline()
+    # f.close()
+    with open('genius_idea.txt', 'r+') as f:
+        tx1 = f.readline()
+        tx2 = f.readline()
+    assert tx1 != tx2, tx1 + " равно " + tx2
 
 
 @When('закончили тест')

@@ -22,7 +22,7 @@ Feature: Test example
     When запомнили текст из элемента "shadow-box__title"
     When нажали на ссылку "English"
     When запомнили текст из элемента "shadow-box__title"
-    Then сравнили запомненные текст1 и текст2
+    Then сравнили запомненные тексты
     When сделали скриншот
     When закончили тест
 
