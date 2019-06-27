@@ -26,32 +26,35 @@ def step(context):
         f.write('')
 
 
-@Then('отображается поле "{text}"')
-def step(context, text):
+@Then('отображается поле "{pole}"')
+def step(context, pole):
     try:
-        assert context.browser.find_element_by_xpath('//*[@title="' + text + '"]')
+        assert context.browser.find_element_by_xpath('//*[@title="{}"]'.format(pole))
     except Exception:
-        print("Поле {} не появилось".format(text))
+        print("Поле {} не появилось".format(pole))
 
 
-@Then('ввели в поле "{text1}" "{text2}"')
-def step(context, text1, text2):
-    elem = context.browser.find_element_by_name(text1)
-    elem.send_keys(text2)
+@Then('ввели в поле "{pole}" "{text}"')
+def step(context, pole, text):
+    d = dict(Поиск='//*[@title="Поиск"]',
+             email='//*[@name="email"]')
+    elem = context.browser.find_element_by_xpath(d[pole])
+    elem.send_keys(text)
     elem.send_keys(Keys.RETURN)
 
 
-@Then('дождались загрузки страницы "{text}"')
-def step(context, text):
+@Then('дождались загрузки страницы "{page}"')
+def step(context, page):
     try:
-        WebDriverWait(context.browser, 5).until(EC.presence_of_element_located((By.ID, text)))
+        WebDriverWait(context.browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, '//*[contains(text(), "{}")]'.format(page))))
     except Exception:
         print("Страница не загрузилась")
 
 
-@When('нажали на ссылку "{text}"')
-def step(context, text):
-    elem = context.browser.find_element_by_partial_link_text(text)
+@When('нажали на ссылку "{textlink}"')
+def step(context, textlink):
+    elem = context.browser.find_element_by_partial_link_text(textlink)
     href = elem.get_attribute('href')
     context.browser.get(href)
 
@@ -60,47 +63,41 @@ def step(context, text):
 def step(context, text):
     try:
         WebDriverWait(context.browser, 5).until(
-            EC.presence_of_element_located((By.XPATH, '//div[text()="' + text + '"]')))
+            EC.presence_of_element_located((By.XPATH, '//div[text()="{}"]'.format(text))))
     except Exception:
         print("Сообщение не появилось")
 
 
-@When('сняли чек-бокс "{text}"')
-def step(context, text):
-    context.browser.find_element_by_xpath("//*[contains(text(), '" + text + "')]").click()
+@When('сняли чек-бокс "{flag}"')
+def step(context, flag):
+    context.browser.find_element_by_xpath("//*[contains(text(), '{}')]".format(flag)).click()
 
 
 @When('сделали скриншот')
 def step(context):
     name = str(datetime.now().strftime('%d-%m-%Y_%H-%M-%S'))
-    context.browser.save_screenshot('./screen/screen' + name + '.png')
+    context.browser.save_screenshot('./screen/screen{}.png'.format(name))
 
 
 @Then('выбрали из списка "{text}"')
 def step(context, text):
-    context.browser.find_element_by_xpath("//select/option[@value='" + text + "']").click()
+    context.browser.find_element_by_xpath("//select/option[@value='{}']".format(text)).click()
 
 
-@When('запомнили текст из элемента "{text}"')
+@When('запомнили текст из {text}')
 def step(context, text):
-    tx = context.browser.find_element_by_class_name(text).text
-    # f = open("genius_idea.txt", "a")
-    # f.write(tx + '\n')
-    # f.close()
+    d = dict(заголовка='shadow-box__title')
+    tx = context.browser.find_element_by_class_name(d[text]).text
     with open('genius_idea.txt', 'a') as f:
         f.write(tx + '\n')
 
 
 @Then('сравнили запомненные тексты')
 def step(context):
-    # f = open("genius_idea.txt", "r+")
-    # tx1 = f.readline()
-    # tx2 = f.readline()
-    # f.close()
     with open('genius_idea.txt', 'r+') as f:
         tx1 = f.readline()
         tx2 = f.readline()
-    assert tx1 != tx2, tx1 + " равно " + tx2
+    assert tx1 != tx2, "{} равно {}".format(tx1, tx2)
 
 
 @When('закончили тест')
