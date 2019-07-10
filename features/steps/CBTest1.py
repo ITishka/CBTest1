@@ -19,14 +19,12 @@ def step(context, url):
 
 @Then('отображается поле "{field}"')
 def step(context, field):
-    assert context.browser.find_element_by_xpath('//*[@title="{}"]'.format(field))
+    # assert context.browser.find_element_by_xpath('//*[@title="{}"]'.format(field))
+    assert context.browser.find_element_by_xpath(f'//*[@title="{field}"]')
 
 
 @Then('ввели в поле "{field}" "{text}"')
 def step(context, field, text):
-    # dictCB = dict(Поиск='//*[@title="Поиск"]',
-    #               email='//*[@name="email"]')
-
     elem = context.browser.find_element_by_xpath(dictCB[field])
     elem.send_keys(text)
     elem.send_keys(Keys.RETURN)
@@ -47,23 +45,23 @@ def step(context, textlink):
 @Then('вышло сообщение "{text}"')
 def step(context, text):
     WebDriverWait(context.browser, 5).until(
-        EC.presence_of_element_located((By.XPATH, '//div[text()="{}"]'.format(text))))
+        EC.presence_of_element_located((By.XPATH, f'//div[text()="{text}"]')))
 
 
 @When('сняли чек-бокс "{flag}"')
 def step(context, flag):
-    context.browser.find_element_by_xpath("//*[contains(text(), '{}')]".format(flag)).click()
+    context.browser.find_element_by_xpath(f"//*[contains(text(), '{flag}')]").click()
 
 
 @When('сделали скриншот')
 def step(context):
     name = str(datetime.now().strftime('%d-%m-%Y_%H-%M-%S'))
-    context.browser.save_screenshot('./screen/screen{}.png'.format(name))
+    context.browser.save_screenshot(f'./screen/screen{name}.png')
 
 
 @Then('выбрали из списка "{text}"')
 def step(context, text):
-    Select(context.browser.find_element_by_name('subject')).select_by_value('{}'.format(text))
+    Select(context.browser.find_element_by_name('subject')).select_by_value(f'{text}')
 
 
 @When('запомнили текст из {text}')
@@ -79,4 +77,4 @@ def step(context):
         lines = f.readlines()
         tx1 = lines[0]
         tx2 = lines[1]
-    assert tx1 != tx2, "{} равно {}".format(tx1, tx2)
+    assert tx1 != tx2, f"{tx1} равно {tx2}"
