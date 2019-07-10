@@ -6,6 +6,7 @@ from behave import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 from features.environment import dictCB
@@ -33,7 +34,7 @@ def step(context, field, text):
 
 @Then('дождались загрузки страницы "{page}"')
 def step(context, page):
-    WebDriverWait(context.browser, 5).until(EC.title_contains(page))
+    WebDriverWait(context.browser, 7).until(EC.title_contains(page))
 
 
 @When('нажали на "{textlink}"')
@@ -62,7 +63,7 @@ def step(context):
 
 @Then('выбрали из списка "{text}"')
 def step(context, text):
-    context.browser.find_element_by_xpath("//select/option[@value='{}']".format(text)).click()
+    Select(context.browser.find_element_by_name('subject')).select_by_value('{}'.format(text))
 
 
 @When('запомнили текст из {text}')
@@ -74,7 +75,8 @@ def step(context, text):
 
 @Then('сравнили запомненные тексты')
 def step(context):
-    with open('genius_idea.txt', 'r+') as f:
-        tx1 = f.readline()
-        tx2 = f.readline()
+    with open('genius_idea.txt', 'r') as f:
+        lines = f.readlines()
+        tx1 = lines[0]
+        tx2 = lines[1]
     assert tx1 != tx2, "{} равно {}".format(tx1, tx2)
