@@ -19,7 +19,6 @@ def step(context, url):
 
 @Then('отображается поле "{field}"')
 def step(context, field):
-    # assert context.browser.find_element_by_xpath('//*[@title="{}"]'.format(field))
     assert context.browser.find_element_by_xpath(f'//*[@title="{field}"]')
 
 
